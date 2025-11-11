@@ -4,16 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlackjackSim
+namespace BJackSim
 {
     public class Hand
     {
         private List<string> cards = new List<string>();
         public List<string> Cards => cards;
 
-        public void Add(List<string> newCards)
+        public void Draw(IDeck deck, int numCards)
         {
-            Cards.AddRange(newCards);
+            List<string> newCards = deck.Deal(numCards);
+            if (newCards == null) throw new ArgumentNullException("Deck dealt no cards");
+            cards.AddRange(newCards);
         }
         public void Clear()
         {

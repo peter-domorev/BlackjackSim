@@ -6,46 +6,60 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlackjackSim
+namespace BJackSim
 {
-    public class StrategyService
+    public class StrategyService : IStrategyService
     {
-        private string path = @"C:\Users\peter\OneDrive\Projects\csharp\blackjack_sim\basic_strategy.xlsx";
-        public DataTable player_hard_table;
-        private DataTable player_soft_table;
-        private DataTable player_pair_table;
-        private DataTable dealer_hard_table;
-        private DataTable dealer_soft_table;
+        private string _path = @"C:\Users\peter\OneDrive\Projects\csharp\blackjack_sim\basic_strategy.xlsx";
+        private DataTable _playerHardTable;
+        private DataTable _playerSoftTable;
+        private DataTable _playerPairTable;
+        private DataTable _dealerHardTable;
+        private DataTable _dealerSoftTable;
 
-        public void BasicStrategy()
+        public StrategyService()
         {
-            player_hard_table = ReadSheet("player_hard");
-            player_soft_table = ReadSheet("player_soft");
-            player_pair_table = ReadSheet("player_pair");
-            dealer_hard_table = ReadSheet("dealer_hard");
-            dealer_soft_table = ReadSheet("dealer_soft");
+            _playerHardTable = ReadSheet("player_hard");
+            _playerSoftTable = ReadSheet("player_soft");
+            _playerPairTable = ReadSheet("player_pair");
+            _dealerHardTable = ReadSheet("dealer_hard");
+            _dealerSoftTable = ReadSheet("dealer_soft");
         }
 
-        public string Decision(string ParticipantType, string HandType, int DealerHandValue, int PlayerHandValue = 0)
+        public Decision MakeDecision(ParticipantType participantType, HandType handType, int dealerHandValue, int playerHandValue = 0) // default 0 cos of excel table?
         {
-            string dealerHandValue = Convert.ToString(DealerHandValue);
-            string playerHandValue = Convert.ToString(PlayerHandValue);
+            string rowKeyPlayer = Convert.ToString(playerHandValue);
+            string columnKeyDealer = Convert.ToString(dealerHandValue);
 
-            string decisionKey = $"{ParticipantType}{HandType}";
-
-            switch (decisionKey)
+            switch (participantType)
             {
-                case "PlayerHard":
-                    return Lookup(player_hard_table, playerHandValue, dealerHandValue);
-                case "PlayerSoft":
-                    return Lookup(player_soft_table, playerHandValue, dealerHandValue);
-                case "PlayerPair":
-                    return Lookup(player_pair_table, playerHandValue, dealerHandValue);
-                case "DealerHard":
-                    return Lookup(dealer_hard_table, dealerHandValue);
-                case "DealerSoft":
-                    return Lookup(dealer_soft_table, dealerHandValue);
-                default: return "Invalid";
+                case ParticipantType.Player:
+                    switch (handType)
+                    {
+                        case HandType.Hard:
+                            return Lookup(_playerHardTable, rowKeyPlayer, columnKeyDealer);
+
+                        case HandType.Soft:
+                            return Lookup(_playerSoftTable, rowKeyPlayer, columnKeyDealer);
+
+                        case HandType.Pair:
+                            return Lookup(_playerPairTable, rowKeyPlayer, columnKeyDealer);
+
+                        default: throw new Exception("Invalid hand type");
+                    }
+
+                case ParticipantType.Dealer:
+                    switch (handType)
+                    {
+                        case HandType.Hard:
+                            return Lookup(_dealerHardTable, columnKeyDealer);
+
+                        case HandType.Soft:
+                            return Lookup(_dealerSoftTable, columnKeyDealer);
+
+                        default: throw new Exception("Invalid hand type");
+                    }
+                default: throw new Exception("Invalid participant type");
             }
         }
 
@@ -53,20 +67,57 @@ namespace BlackjackSim
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); // put in static method?
 
-            using var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            using var reader = ExcelReaderFactory.CreateReader(stream);
-            var ds = reader.AsDataSet(new ExcelDataSetConfiguration
+            try
             {
-                ConfigureDataTable = _ => new ExcelDataTableConfiguration { UseHeaderRow = true }
-            });
-            return sheetName != null ? ds.Tables[sheetName] : ds.Tables[0];
-        }
+                using var stream = File.Open(_path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                using var reader = ExcelReaderFactory.CreateReader(stream);
+                var ds = reader.AsDataSet(new ExcelDataSetConfiguration
+                {
+                    ConfigureDataTable = _ => new ExcelDataTableConfiguration { UseHeaderRow = true }
+                });
+                return sheetName != null ? ds.Tables[sheetName] : ds.Tables[0];
 
-        public string Lookup(DataTable table, string rowKey, string colKey = "0")
+            }
+            catch
+            {
+                throw new Exception("Incorrect file path");
+            }
+        }
+        private Decision Lookup(DataTable table, string rowKey, string colKey = "0")
         {
             DataRow row = table.AsEnumerable()
                 .First(r => r["Total"].ToString() == rowKey);
-            return row[colKey].ToString();
+            string LookupDecision = row[colKey].ToString();
+
+            Decision decision;
+
+
+            switch (LookupDecision)
+            {
+                case "H":
+                    decision = Decision.Hit;
+                    break;
+                case "S":
+                    decision = Decision.Stand;
+                    break;
+                case "D":
+                    decision = Decision.Double;
+                    break;
+                case "P":
+                    decision = Decision.Split;
+                    break;
+                case "R":
+                    decision = Decision.Surrender;
+                    break;
+                case "R/H":
+                    decision = Decision.SurrenderOrHit;
+                    break;
+                default: throw new Exception("Invalid value from excel sheet");
+
+            }
+
+            return decision;
         }
     }
 }
+

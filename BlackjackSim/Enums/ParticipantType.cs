@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace BJackSim
 {
-    public class Participant
+    public enum ParticipantType
     {
-        
-
-
-
+        Dealer,
+        Player
     }
 }

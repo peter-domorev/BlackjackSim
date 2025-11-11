@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace BJackSim
 {
-    public class Participant
+    public enum HandType
     {
-        
-
-
-
+        Hard,
+        Soft,
+        Pair
     }
 }

@@ -4,35 +4,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlackjackSim
+namespace BJackSim
 {
-    public interface IHandService
-    {
-        public int CalculateValue(Hand hand);
-    }
     public class HandService : IHandService
     {
-        /*
-        public string Type()
+
+        public HandType GetHandType(List<string> cards)
         {
-            if (Cards.Count == 2 && Cards[0] == Cards[1])
+            if (cards.Count == 2 && cards[0] == cards[1])
             {
-                return "Pair";
+                return HandType.Pair;
             }
-            else if (Cards.Contains("A"))
+            else if (cards.Contains("A"))
             {
-                return "Soft";
+                return HandType.Soft;
             }
             else
             {
-                return "Hard";
+                return HandType.Hard;
             }
         }
-        */
-        public int CalculateValue(Hand hand)
+
+        public int CalculateValue(List<string> cards)
         {
             int value = 0;
-            List<string> cards = hand.Cards;
 
             // sum all cards, leaving ace as 1
             foreach (string card in cards)
@@ -69,20 +64,14 @@ namespace BlackjackSim
                 }
 
             }
-            else // no aces
-            {
-                // check for bust
-                if (value > 21)
-                {
-                    isBust = true;
-                }
-                else
-                {
-                    value = value;
-                }
-            }
 
             return value;
+        }
+
+        public bool IsBust(List<string> cards)
+        {
+            if (CalculateValue(cards) > 21) return true;
+            return false;
         }
     }
 }

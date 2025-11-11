@@ -4,28 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlackjackSim
+namespace BJackSim
 {
-    class Deck
+    public class Deck : IDeck
     {
-        private List<string> allCards;
-        private Random rng = new Random();
+        private List<string> cards;
         private int numDecks;
+        private Random rng = new Random(); //
 
-
+        public Deck()
+        {
+            numDecks = 1;
+            BuildNewDeck();
+        }
         public Deck(int NumDecks)
         {
             numDecks = NumDecks;
-            BuildDecks();
+            BuildNewDeck();
         }
 
 
-        public int NumCards
-        {
-            get { return 52 * numDecks; }
-        }
-
-        private void BuildDecks()
+        private void BuildNewDeck()
         {
             string[] oneSuit = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A" };
 
@@ -43,27 +42,28 @@ namespace BlackjackSim
             {
                 Array.Copy(singleDeck, 0, allCardsArray, i * singleDeck.Length, singleDeck.Length);
             }
-            allCards = allCardsArray.ToList();
+
+            cards = allCardsArray.ToList();
         }
 
 
-        public List<string> DrawCards(int numCards)
+        public List<string> Deal(int numCards)
         {
             List<string> cards = new List<string>(numCards);
 
             for (int i = 0; i < numCards; i++)
             {
-                int index = rng.Next(allCards.Count);
-                cards.Add(allCards[index]);
-                allCards.RemoveAt(index);
+                int index = rng.Next(cards.Count);
+                cards.Add(cards[index]);
+                cards.RemoveAt(index);
             }
             return cards;
         }
 
 
-        public void ShuffleDeck()
+        public void Shuffle()
         {
-            BuildDecks();
+            BuildNewDeck();
         }
     }
 

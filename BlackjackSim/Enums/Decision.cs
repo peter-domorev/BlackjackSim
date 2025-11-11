@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace BJackSim
 {
-    public class Participant
+    public enum Decision
     {
-        
-
-
-
+        Hit,
+        Stand,
+        Double,
+        Split,
+        Surrender,
+        SurrenderOrHit
     }
 }

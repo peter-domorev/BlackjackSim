@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlackjackSim
+namespace BJackSim
 {
     public class BankService
     {
-        public int CalculateNetProfit(string result, List<string> cards, string playerDecision, int betAmount)
+        public int CalculateNetProfit(Outcome outcome, List<string> cards, string playerDecision, int betAmount)
         {
             int netProfit = 0; // change to just declaration
 
