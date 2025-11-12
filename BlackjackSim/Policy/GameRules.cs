@@ -86,6 +86,10 @@ namespace BJackSim
             public SurrenderRules(bool surrenderOnSplit = false, SurrenderType surrenderType = SurrenderType.NotAllowed)
             {
                 SurrenderOnSplit = surrenderOnSplit;
+
+                if (surrenderType == SurrenderType.NotAllowed) // ensure rules don't contradict
+                    surrenderOnSplit = false;
+
                 SurrenderType = surrenderType;
             }
 

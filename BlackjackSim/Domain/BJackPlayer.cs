@@ -15,12 +15,10 @@ namespace BJackSim
 
         private GameRules _gameRules;
 
+        private List<PlayerHand> _hands = new List<PlayerHand>();
 
+        public List<PlayerHand> Hands => _hands;
 
-        private Dictionary<Hand, int> _normalHands = new Dictionary<Hand, int>();  // key: hand, value: betAmount
-        private Dictionary<Hand, int> _splitHands = new Dictionary<Hand, int>();
-        public Dictionary<Hand, int> NormalHands => _normalHands;
-        public Dictionary<Hand, int> SplitHands => _splitHands;
 
 
 
@@ -40,8 +38,7 @@ namespace BJackSim
         /// </summary>
         public void Clear()
         {
-            _normalHands = new Dictionary<Hand, int>();
-            _splitHands = new Dictionary<Hand, int>();
+            _hands = new List<PlayerHand>();
         }
 
 
@@ -74,13 +71,11 @@ namespace BJackSim
 
         private void CompleteNormalTurns(int dealerHandValue)
         {
-            
 
-            foreach (var kvp in _normalHands)
-            {
-                Hand hand = kvp.Key;
-                int betAmount = kvp.Value;
+            List<PlayerHand> normalHands = _hands.FindAll(h => h.NumTimesSplit == 0);
 
+            foreach (PlayerHand hand in normalHands)
+            {                
                 List<string> cards = hand.Cards;
 
                 Decision decision;
