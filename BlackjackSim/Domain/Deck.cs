@@ -12,12 +12,7 @@ namespace BJackSim
         private int numDecks;
         private Random rng = new Random(); //
 
-        public Deck()
-        {
-            numDecks = 1;
-            BuildNewDeck();
-        }
-        public Deck(int NumDecks)
+        public Deck(int NumDecks = 1)
         {
             numDecks = NumDecks;
             BuildNewDeck();

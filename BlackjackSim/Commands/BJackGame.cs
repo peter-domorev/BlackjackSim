@@ -51,7 +51,7 @@ namespace BJackSim
 
         }
 
-        private void ResetGame()
+        /*private void ResetGame()
         {
             foreach (BJackPlayer player in _players)
             {
@@ -61,49 +61,19 @@ namespace BJackSim
 
             _dealer.Clear();
             _deck.Shuffle();
-        }
+        }*/
 
-        public void PlayRound()
+        public void PlayRoundNew()
         {
-            string playerDecision;
-            string dealerDecision;
-            string result;
+            // clear hands
+            
 
             // clear hands
 
             // draw cards
 
             /*
-            do
-            {
-                // make player deicion
-                
-                switch (playerDecision)
-                {
-                    case "H":
-                        player.Hand.Add(deck.DrawCards(1));
-                        break;
-                    case "D":
-                        if (doubleDownAllowed)
-                        {
-                            // double the bet
-                            player.Hand.Add(deck.DrawCards(1));
-                            break;
-                        }
-                        goto case "H";
-                    //case "SP":
-                    //break;
-                    case "R/H":
-                        if (surrenderAllowed)
-                        {
-                            // halve the bet
-                            result = "DealerWins"; // end game
-                            break;
-                        }
-                        goto case "H";
-                }
-            }
-            while (!player.Hand.isBust || (playerDecision != "S" || playerDecision != "D"));
+            
 
 
             if (player.Hand.isBust)
@@ -112,16 +82,7 @@ namespace BJackSim
             }
             else
             {
-                do
-                {
-                    dealerDecision = strategy.Decision("Dealer", dealer.Hand.Type(), dealer.Hand.Value());
-
-                    if (dealerDecision == "H")
-                    {
-                        dealer.Hand.Add(deck.DrawCards(1));
-                    }
-                }
-                while (!dealer.Hand.isBust || (dealerDecision != "S"));
+                
 
 
                 if (dealer.Hand.isBust)

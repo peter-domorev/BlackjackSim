@@ -8,14 +8,38 @@ namespace BJackSim
 {
     public class HandService : IHandService
     {
+        private const int DEFAULT_ACE_VALUE = 1;
+        private const int ADDITIONAL_ACE_VALUE = 10; // used to add 10 to default ace value to get 11
+        private const int FACE_CARD_VALUE = 10;
+
+        private GameRules _gameRules;
+
+        public HandService(GameRules gameRules)
+        {
+            _gameRules = gameRules;
+        }
 
         public HandType GetHandType(List<string> cards)
         {
-            if (cards.Count == 2 && cards[0] == cards[1])
+
+            if (cards.Count == 2)
             {
-                return HandType.Pair;
+                switch (_gameRules.SplitType)
+                {
+
+                    case SplitType.IdentialRanks:
+                        if (cards[0] == cards[1]) 
+                            return HandType.Pair;
+                        break;
+
+                    case SplitType.EqualValues:
+                        if (IndividualValue(cards[0]) == IndividualValue(cards[1]))
+                            return HandType.Pair;
+                        break;
+                }
             }
-            else if (cards.Contains("A"))
+            
+            if (cards.Contains("A"))
             {
                 return HandType.Soft;
             }
@@ -25,44 +49,56 @@ namespace BJackSim
             }
         }
 
-        public int CalculateValue(List<string> cards)
+        public int CalculateValue(List<string> cards) // calculates the highest useful value
         {
-            int value = 0;
+            int totalValue = 0;
 
-            // sum all cards, leaving ace as 1
-            foreach (string card in cards)
+            int numAces = 0;
+
+            foreach (string card in cards) // assume acces have a value of 1
             {
-                if (int.TryParse(card, out int result))
-                {
-                    value += result;
-                }
-                else if (card == "A")
-                {
-                    value += 1;
-                }
-                else
-                {
-                    value += 10;
-                }
+                int value = IndividualValue(card);
+                totalValue += value;
+
+                if (card == "A") numAces++;
             }
 
-            // handle aces
-            int numAces = cards.Count(c => c == "A");
-            if (numAces != 0)
+
+            if (numAces != 0) // manage aces having multiple values
             {
-                int minTotal = value;
-                int maxTotal = value + 10; // 2 aces as 10's is bust
+                int minTotal = totalValue;
+                int maxTotal = totalValue + ADDITIONAL_ACE_VALUE; // 2 aces as 10's is bust, so only 1 10 needs to be added
 
                 // return highest value
-                if (maxTotal <= 21)
+                if (maxTotal > 21)
                 {
-                    value = maxTotal;
+                    totalValue = minTotal;
                 }
                 else
                 {
-                    value = minTotal;
+                    totalValue = maxTotal;
                 }
 
+            }
+
+            return totalValue;
+        }
+
+        private int IndividualValue(string card) // aces are assumed to be 1
+        {
+            int value;
+
+            if (int.TryParse(card, out int result))
+            {
+                value = result;
+            }
+            else if (card == "A")
+            {
+                value = DEFAULT_ACE_VALUE;
+            }
+            else
+            {
+                value = FACE_CARD_VALUE;
             }
 
             return value;

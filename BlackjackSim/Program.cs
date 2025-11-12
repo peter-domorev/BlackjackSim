@@ -19,16 +19,10 @@ namespace BJackSim
         static void Main(string[] args)
         {
 
-            StrategyService strategy = new StrategyService();
-            BJackDealer dealer = new BJackDealer();
-            BJackPlayer player = new BJackPlayer();
+            GameRules gameRules = new GameRules();
 
-            Type dealerType = dealer.GetType();
-            Type playerType = player.GetType();
-
-            Console.WriteLine(dealerType);
-            Console.WriteLine(playerType);
-
+            int numDecks = 4;
+            Deck deck = new Deck(numDecks);
 
 
 

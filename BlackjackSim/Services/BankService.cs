@@ -12,15 +12,9 @@ namespace BJackSim
         {
             int netProfit = 0; // change to just declaration
 
-            switch (result)
+            switch (outcome)
             {
-                case "DealerWins":
-                    netProfit = -betAmount;
-                    break;
-                case "Push":
-                    netProfit = 0;
-                    break;
-                case "PlayerWins":
+                case Outcome.PlayerWins:
                     switch (playerDecision)
                     {
                         case "":
@@ -28,6 +22,13 @@ namespace BJackSim
                             break;
                     }
                     break;
+                case Outcome.DealerWins:
+                    netProfit = -betAmount;
+                    break;
+                case Outcome.Push:
+                    netProfit = 0;
+                    break;
+                
             }
 
 
