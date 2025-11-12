@@ -9,20 +9,21 @@ namespace BJackSim
 {
     public class BJackPlayer
     {
-        private IDeck _deck; // do you still make references in this style _deck? or just deck
+        private IDeck _deck;
         private IHandService _handService;
         private IStrategyService _strategy;
-
         private GameRules _gameRules;
 
         private List<PlayerHand> _hands = new List<PlayerHand>();
 
-        public List<PlayerHand> Hands => _hands;
+        public List<PlayerHand> AllHands => _hands;
+        public List<PlayerHand> NormalHands => _hands.FindAll(h => h.NumTimesSplit == 0);
+        public List<PlayerHand> SplitHands => _hands.FindAll(h => h.NumTimesSplit > 0);
 
 
 
 
-        
+
 
         public BJackPlayer(IDeck deck, IHandService handService, IStrategyService strategySerivce, GameRules gameRules)
         {
@@ -58,23 +59,19 @@ namespace BJackSim
 
 
 
-        public void CompleteTurns(int dealerHandValue)
+
+
+        private void CompleteTurns(int dealerHandValue)
         {
-            Dictionary<Hand, int> newHands = new Dictionary<Hand, int>(); //
-            Dictionary<Hand, int> splitHands = new Dictionary<Hand, int>(); //
+            List<PlayerHand> newNormalHands = new List<PlayerHand>();
+            List<PlayerHand> newSplitHands = new List<PlayerHand>();
+
+            // work flow: 
+            // 
 
 
-            
-
-        }
-
-
-        private void CompleteNormalTurns(int dealerHandValue)
-        {
-
-            List<PlayerHand> normalHands = _hands.FindAll(h => h.NumTimesSplit == 0);
-
-            foreach (PlayerHand hand in normalHands)
+            // deal with normal hands first
+            foreach (PlayerHand hand in NormalHands)
             {                
                 List<string> cards = hand.Cards;
 
@@ -100,7 +97,7 @@ namespace BJackSim
                         case Decision.Double:
                             if (_gameRules.Double.DoubleAllowed)
                             {
-                                betAmount = betAmount * 2;
+                                hand.BetAmount *= 2;
                                 hand.Draw(_deck, numCardsToDraw);
                                 break;
                             }
@@ -113,11 +110,11 @@ namespace BJackSim
                             
                             switch (_gameRules.Split.SplitType)
                             {
-                                case SplitType.EqualValues:
-
-                                    break;
+                                case SplitType.EqualValues: // need to deal with decision service splitting when not allowed, change of rules
                                 case SplitType.IdentialRanks:
 
+                                    List<PlayerHand> splitHands = hand.Split();
+                                    newSplitHands.AddRange(splitHands);
                                     break;
                             }
 
@@ -134,11 +131,8 @@ namespace BJackSim
                             switch (_gameRules.Surrender.SurrenderType)
                             {
                                 case SurrenderType.Early:
-                                    // lose half of bet
-                                    break;
-
                                 case SurrenderType.Late:
-                                    // lose half of bet if dealer doesn't have blackjack
+                                    hand.Surrendered = true;
                                     break;
                             }
                             break;
@@ -149,18 +143,22 @@ namespace BJackSim
                 }
                 while (!isBust || (decision != Decision.Stand || decision != Decision.Double));
 
-                newHands.Add(hand, betAmount); // add new hand to newHands
+                newNormalHands.Add(hand); // add to new hands list
+
             }
 
             _hands = newHands; // replace with new hand, as _hands can't be directly modified
         }
 
-        private void CompleteSplitTurns(int dealerHandValue)
+        private void CompleteNormalTurn(int dealerHandValue)
         {
-            foreach (var kvp in _splitHands)
+
+        }
+
+        private void CompleteSplitTurns(int dealerHandValue, List<PlayerHand> splitHands)
+        {
+            foreach (PlayerHand hand in splitHands)
             {
-                Hand hand = kvp.Key;
-                int betAmount = kvp.Value;
 
                 List<string> cards = hand.Cards;
 
@@ -168,6 +166,7 @@ namespace BJackSim
                 bool isBust;
                 int numCardsToDraw = 1;
 
+                List<PlayerHand> newSplitHands = new List<PlayerHand>();
 
 
                 do
@@ -184,9 +183,10 @@ namespace BJackSim
 
 
                         case Decision.Double:
-                            if (_gameRules.Double.DoubleAllowed)
+                            if (_gameRules.Double.DoubleAllowed 
+                                && _gameRules.Double.DoubleAfterSplitAllowed) // added rule
                             {
-                                betAmount = betAmount * 2;
+                                hand.BetAmount *= 2; 
                                 hand.Draw(_deck, numCardsToDraw);
                                 break;
                             }
@@ -219,7 +219,8 @@ namespace BJackSim
 
 
                         case Decision.SurrenderOrHit:
-                            if (_gameRules.Surrender.SurrenderType == SurrenderType.NotAllowed)
+                            if (_gameRules.Surrender.SurrenderType == SurrenderType.NotAllowed
+                                || _gameRules.Surrender.SurrenderOnSplit == false) // added rule
                             {
                                 goto case Decision.Hit;
                             }
@@ -227,11 +228,8 @@ namespace BJackSim
                             switch (_gameRules.Surrender.SurrenderType)
                             {
                                 case SurrenderType.Early:
-                                    // lose half of bet
-                                    break;
-
                                 case SurrenderType.Late:
-                                    // lose half of bet if dealer doesn't have blackjack
+                                    hand.Surrendered = true;
                                     break;
                             }
                             break;
@@ -242,10 +240,9 @@ namespace BJackSim
                 }
                 while (!isBust || (decision != Decision.Stand || decision != Decision.Double));
 
-                newHands.Add(hand, betAmount); // add new hand to newHands
+                newSplitHands.Add(hand); // add new split hand to newSplitHands
             }
 
-            _hands = newHands; // replace with new hand, as _hands can't be directly modified
         }
 
 

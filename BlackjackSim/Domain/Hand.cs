@@ -8,18 +8,18 @@ namespace BJackSim
 {
     public class Hand
     {
-        private List<string> cards = new List<string>();
-        public List<string> Cards => cards;
+        protected List<string> _cards = new List<string>();
+        public List<string> Cards => _cards;
 
         public void Draw(IDeck deck, int numCards)
         {
             List<string> newCards = deck.Deal(numCards);
             if (newCards == null) throw new ArgumentNullException("Deck dealt no cards");
-            cards.AddRange(newCards);
+            _cards.AddRange(newCards);
         }
         public void Clear()
         {
-            cards = [];
+            _cards = [];
         }
     }
 }
