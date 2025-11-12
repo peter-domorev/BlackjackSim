@@ -24,7 +24,7 @@ namespace BJackSim
 
             if (cards.Count == 2)
             {
-                switch (_gameRules.SplitType)
+                switch (_gameRules.Split.SplitType)
                 {
 
                     case SplitType.IdentialRanks:
