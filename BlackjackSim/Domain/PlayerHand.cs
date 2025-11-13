@@ -8,12 +8,12 @@ namespace BJackSim
 {
     public class PlayerHand : Hand
     {
-        private int _numTimesSplit = 0;
+        private bool isSplitHand = false;
         
         public int BetAmount { get; set; }
-        public int NumTimesSplit { 
-            get { return _numTimesSplit; }
-            set { _numTimesSplit = value; }
+        public bool IsSplitHand { 
+            get { return isSplitHand; }
+            set { isSplitHand = value; }
         }
         public bool Surrendered { get; set; }
 
@@ -29,11 +29,11 @@ namespace BJackSim
             if (this._cards.Count != 2) throw new Exception("Hand being split contains more than 2 cards");
 
             PlayerHand splitHand1 = this;
-            splitHand1._numTimesSplit++; // validate this works
+            splitHand1.isSplitHand = true; // validate this works
             splitHand1._cards = new List<string> { this._cards[0] };
 
             PlayerHand splitHand2 = this;
-            splitHand2.NumTimesSplit++;
+            splitHand2.isSplitHand = true;
             splitHand2._cards = new List<string> { this._cards[1] };
 
             List<PlayerHand> newHands = new List<PlayerHand> { splitHand1, splitHand2 };

@@ -17,8 +17,8 @@ namespace BJackSim
         private List<PlayerHand> _hands = new List<PlayerHand>();
 
         public List<PlayerHand> AllHands => _hands;
-        public List<PlayerHand> NormalHands => _hands.FindAll(h => h.NumTimesSplit == 0);
-        public List<PlayerHand> SplitHands => _hands.FindAll(h => h.NumTimesSplit > 0);
+        public List<PlayerHand> NormalHands => _hands.FindAll(h => h.IsSplitHand == false);
+        public List<PlayerHand> SplitHands => _hands.FindAll(h => h.IsSplitHand == true);
 
 
 

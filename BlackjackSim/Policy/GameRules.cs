@@ -38,23 +38,21 @@ namespace BJackSim
             /// </summary>
             public bool DealerRestrictsReSplit { get; }
 
-            public bool SplitBJackIsBJack { get; }
+
             public SplitType SplitType { get; }
             public int MaxSplitsAllowed { get; }
 
             
 
-            public SplitRules(bool dealerRestrictsReSplit = true, bool splitBJackIsBJack = false, SplitType splitType = SplitType.IdentialRanks, int numSplitsAllowed = 3)
+            public SplitRules(bool dealerRestrictsReSplit = true, SplitType splitType = SplitType.IdentialRanks, int numSplitsAllowed = 3)
             {
                 DealerRestrictsReSplit = dealerRestrictsReSplit;
-                SplitBJackIsBJack = splitBJackIsBJack;
                 SplitType = splitType;
 
                 if (splitType == SplitType.NotAllowed)
                 {
                     // ensure rules don't contradict
                     DealerRestrictsReSplit = false;
-                    SplitBJackIsBJack = false;
                     numSplitsAllowed = 0;
                 }
 
