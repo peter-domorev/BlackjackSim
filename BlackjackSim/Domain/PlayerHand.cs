@@ -11,10 +11,7 @@ namespace BJackSim
         private bool isSplitHand = false;
         
         public int BetAmount { get; set; }
-        public bool IsSplitHand { 
-            get { return isSplitHand; }
-            set { isSplitHand = value; }
-        }
+        public bool IsSplitHand => isSplitHand;
         public bool Surrendered { get; set; }
 
 

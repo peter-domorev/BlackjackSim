@@ -10,7 +10,7 @@ namespace BJackSim
 {
     public class StrategyService : IStrategyService
     {
-        private string _path = @"C:\Users\peter\OneDrive\Projects\csharp\blackjack_sim\basic_strategy.xlsx";
+        private string _path = @"C:\Users\peter\OneDrive\Master Folder\_Life!\_Hobbies\_Programming\projects\csharp\blackjack_sim\basic_strategy.xlsx";
         private DataTable _playerHardTable;
         private DataTable _playerSoftTable;
         private DataTable _playerPairTable;

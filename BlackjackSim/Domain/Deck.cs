@@ -8,13 +8,13 @@ namespace BJackSim
 {
     public class Deck : IDeck
     {
-        private List<string> cards;
-        private int numDecks;
-        private Random rng = new Random(); //
+        private List<string> _cards;
+        private int _numDecks;
+        private Random _rng = new Random();
 
         public Deck(int NumDecks = 1)
         {
-            numDecks = NumDecks;
+            _numDecks = NumDecks;
             BuildNewDeck();
         }
 
@@ -32,27 +32,28 @@ namespace BJackSim
             }
 
             // create all decks
-            string[] allCardsArray = new string[52 * numDecks];
-            for (int i = 0; i < numDecks; i++)
+            string[] allCardsArray = new string[52 * _numDecks];
+            for (int i = 0; i < _numDecks; i++)
             {
                 Array.Copy(singleDeck, 0, allCardsArray, i * singleDeck.Length, singleDeck.Length);
             }
 
-            cards = allCardsArray.ToList();
+            _cards = allCardsArray.ToList();
         }
 
 
         public List<string> Deal(int numCards)
         {
-            List<string> cards = new List<string>(numCards);
+            List<string> dealtCards = new List<string>(numCards);
 
             for (int i = 0; i < numCards; i++)
             {
-                int index = rng.Next(cards.Count);
-                cards.Add(cards[index]);
-                cards.RemoveAt(index);
+                int index = _rng.Next(_cards.Count);
+                
+                dealtCards.Add(_cards[index]);
+                _cards.RemoveAt(index);
             }
-            return cards;
+            return dealtCards;
         }
 
 

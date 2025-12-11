@@ -44,14 +44,44 @@ namespace BJackSim
     {
         static void Main(string[] args)
         {
+            // Settings
+            int numDecks = 4;
 
+
+
+
+            // Domain
+            Deck deck = new Deck(numDecks);
+
+            // Policy
             GameRules gameRules = new GameRules();
+            PayoutPolicy payoutPolicy = new PayoutPolicy(gameRules);
 
+            // Servies
+            BankService bankService = new BankService();
+            HandService handService = new HandService(gameRules);
+            StrategyService strategryService = new StrategyService();
 
+            // Commands
+            //BJackGame bJackGame = new BJackGame()
+
+            int i = 0;
+            string? currentCard;
+            do
+            {
+                currentCard = deck.Deal(1).ToString();
+                i++;
+
+                Console.WriteLine(currentCard);
+                Console.WriteLine($"Number of cards printed: {i}");
+
+            }
+            while (currentCard != null);
+
+            Console.WriteLine("All cards have been dealt");
             
 
-            int numDecks = 4;
-            Deck deck = new Deck(numDecks);
+            
 
 
 

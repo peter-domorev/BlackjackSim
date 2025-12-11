@@ -146,7 +146,7 @@ namespace BJackSim
                 newNormalHands.Add(hand); // add to new hands list
 
             }
-
+            List<PlayerHand> newHands = new List<PlayerHand>(); // just to avoid complier errors
             _hands = newHands; // replace with new hand, as _hands can't be directly modified
         }
 
@@ -166,6 +166,7 @@ namespace BJackSim
                 bool isBust;
                 int numCardsToDraw = 1;
 
+                List<PlayerHand> _splitHands = new List<PlayerHand>(); // temporary value just to avoid complier errors
                 List<PlayerHand> newSplitHands = new List<PlayerHand>();
 
 
